@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT va Marketing Agentligi - Biznes Modeli</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%236366f1'/%3E%3Cstop offset='50%25' stop-color='%238b5cf6'/%3E%3Cstop offset='100%25' stop-color='%2306b6d4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='%230a0e1a'/%3E%3Crect x='2' y='2' width='60' height='60' rx='12' fill='none' stroke='url(%23g)' stroke-width='2.5'/%3E%3Ctext x='10' y='44' font-family='monospace' font-weight='bold' font-size='28' fill='url(%23g)'%3E%26lt;/%26gt;%3C/text%3E%3Ccircle cx='50' cy='14' r='4' fill='%2306b6d4' opacity='0.8'/%3E%3Ccircle cx='50' cy='14' r='6' fill='none' stroke='%2306b6d4' stroke-width='1' opacity='0.4'/%3E%3C/svg%3E">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.263.1/font/lucide.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --bg: #0a0e1a;
+            --surface: #111827;
+            --card: rgba(26, 34, 52, .7);
+            --accent: #6366f1;
+            --accent2: #8b5cf6;
+            --accent3: #06b6d4;
+            --green: #10b981;
+            --orange: #f59e0b;
+            --red: #ef4444;
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+            --border: rgba(99, 102, 241, .2)
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw
+        }
+
+        .presentation {
+            position: relative;
+            width: 100%;
+            height: 100vh
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 60px;
+            opacity: 0;
+            transform: scale(.96);
+            transition: all .7s cubic-bezier(.4, 0, .2, 1);
+            pointer-events: none;
+            overflow-y: auto
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: all
+        }
+
+        .slide-number {
+            position: fixed;
+            top: 24px;
+            left: 32px;
+            font-size: 13px;
+            color: var(--muted);
+            font-weight: 500;
+            z-index: 100;
+            letter-spacing: 1px
+        }
+
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 100
+        }
+
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .15);
+            cursor: pointer;
+            transition: all .3s
+        }
+
+        .nav-dot.active {
+            background: var(--accent);
+            width: 32px;
+            border-radius: 5px;
+            box-shadow: 0 0 16px rgba(99, 102, 241, .5)
+        }
+
+        .nav-arrows {
+            position: fixed;
+            bottom: 26px;
+            right: 32px;
+            display: flex;
+            gap: 8px;
+            z-index: 100
+        }
+
+        .nav-arrows button {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(17, 24, 39, .6);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .3s;
+            backdrop-filter: blur(16px)
+        }
+
+        .nav-arrows button:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(99, 102, 241, .4);
+            transform: scale(1.08)
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            border-radius: 24px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            backdrop-filter: blur(12px)
+        }
+
+        .badge-purple {
+            background: rgba(99, 102, 241, .12);
+            color: #a5b4fc;
+            border: 1px solid rgba(99, 102, 241, .25)
+        }
+
+        .badge-cyan {
+            background: rgba(6, 182, 212, .12);
+            color: #67e8f9;
+            border: 1px solid rgba(6, 182, 212, .25)
+        }
+
+        .badge-green {
+            background: rgba(16, 185, 129, .12);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, .25)
+        }
+
+        .badge-orange {
+            background: rgba(245, 158, 11, .12);
+            color: #fcd34d;
+            border: 1px solid rgba(245, 158, 11, .25)
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(34px, 5vw, 58px);
+            font-weight: 800;
+            line-height: 1.08;
+            margin-bottom: 14px
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(26px, 3.5vw, 42px);
+            font-weight: 700;
+            margin-bottom: 10px
+        }
+
+        h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 19px;
+            font-weight: 600;
+            margin-bottom: 12px
+        }
+
+        .subtitle {
+            font-size: 17px;
+            color: var(--muted);
+            max-width: 620px;
+            line-height: 1.65;
+            margin-bottom: 24px
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #818cf8, #c084fc, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent
+        }
+
+        .grid2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            width: 100%;
+            max-width: 1100px
+        }
+
+        .grid3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 1100px
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 24px;
+            transition: all .35s;
+            backdrop-filter: blur(16px);
+            position: relative;
+            overflow: hidden
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .1), transparent)
+        }
+
+        .card:hover {
+            border-color: rgba(129, 140, 248, .4);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, .3)
+        }
+
+        .stat {
+            font-family: 'Outfit', sans-serif;
+            font-size: 30px;
+            font-weight: 700;
+            margin: 8px 0 4px
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: .5px
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 14px;
+            overflow: hidden;
+            background: var(--card);
+            backdrop-filter: blur(16px)
+        }
+
+        th {
+            background: rgba(99, 102, 241, .12);
+            padding: 14px 18px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #a5b4fc
+        }
+
+        td {
+            padding: 13px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, .04);
+            font-size: 14px
+        }
+
+        tr:last-child td {
+            border-bottom: none
+        }
+
+        tr.total-row {
+            background: rgba(99, 102, 241, .08)
+        }
+
+        tr.total-row td {
+            font-weight: 700;
+            color: #a5b4fc;
+            font-size: 15px
+        }
+
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, .06);
+            overflow: hidden;
+            margin-top: 10px
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1.4s cubic-bezier(.4, 0, .2, 1)
+        }
+
+        /* SVG Icon Boxes */
+        .ico {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+            position: relative
+        }
+
+        .ico svg {
+            width: 24px;
+            height: 24px;
+            stroke-width: 1.8
+        }
+
+        .ico::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 14px;
+            background: inherit;
+            filter: blur(14px);
+            opacity: .4;
+            z-index: -1
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 340px;
+            margin: 0 auto
+        }
+
+        .glow {
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            filter: blur(140px);
+            opacity: .12;
+            pointer-events: none;
+            animation: glowPulse 6s ease-in-out infinite
+        }
+
+        .glow-purple {
+            background: #6366f1
+        }
+
+        .glow-cyan {
+            background: #06b6d4
+        }
+
+        .glow-green {
+            background: #10b981
+        }
+
+        @keyframes glowPulse {
+
+            0%,
+            100% {
+                opacity: .12;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .18;
+                transform: scale(1.1)
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: all .6s cubic-bezier(.4, 0, .2, 1)
+        }
+
+        .slide.active .fade-in {
+            opacity: 1;
+            transform: translateY(0)
+        }
+
+        .slide.active .fade-in:nth-child(2) {
+            transition-delay: .12s
+        }
+
+        .slide.active .fade-in:nth-child(3) {
+            transition-delay: .24s
+        }
+
+        .slide.active .fade-in:nth-child(4) {
+            transition-delay: .36s
+        }
+
+        .slide.active .fade-in:nth-child(5) {
+            transition-delay: .48s
+        }
+
+        .conclusion-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 1100px
+        }
+
+        .conclusion-card {
+            background: var(--card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 28px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all .35s
+        }
+
+        .conclusion-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 3px 3px 0 0
+        }
+
+        .conclusion-card:nth-child(1)::before {
+            background: linear-gradient(90deg, #10b981, #34d399)
+        }
+
+        .conclusion-card:nth-child(2)::before {
+            background: linear-gradient(90deg, #6366f1, #a78bfa)
+        }
+
+        .conclusion-card:nth-child(3)::before {
+            background: linear-gradient(90deg, #f59e0b, #fbbf24)
+        }
+
+        .conclusion-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, .3)
+        }
+
+        .key-metric {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .04)
+        }
+
+        .key-metric:last-child {
+            border: none
+        }
+
+        .metric-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            box-shadow: 0 0 8px currentColor
+        }
+
+        .slide-content {
+            width: 100%;
+            max-width: 1100px;
+            text-align: center
+        }
+
+        /* Animated counter */
+        .counter {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums
+        }
+
+        /* Hero service cards */
+        .hero-card {
+            background: var(--card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 28px 20px;
+            text-align: center;
+            transition: all .4s;
+            position: relative;
+            overflow: hidden
+        }
+
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 3px 3px 0 0
+        }
+
+        .hero-card:nth-child(1)::before {
+            background: linear-gradient(90deg, #6366f1, #818cf8)
+        }
+
+        .hero-card:nth-child(2)::before {
+            background: linear-gradient(90deg, #06b6d4, #22d3ee)
+        }
+
+        .hero-card:nth-child(3)::before {
+            background: linear-gradient(90deg, #8b5cf6, #c084fc)
+        }
+
+        .hero-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, .4);
+            border-color: rgba(129, 140, 248, .3)
+        }
+
+        .hero-card .ico {
+            margin: 0 auto 14px
+        }
+
+        .hero-card h4 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px
+        }
+
+        .hero-card p {
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+        /* Stat highlight boxes in slide 3 */
+        .stat-highlight {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px
+        }
+
+        .stat-box {
+            flex: 1;
+            background: var(--card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px
+        }
+
+        .stat-box:nth-child(1)::before {
+            background: #10b981
+        }
+
+        .stat-box:nth-child(2)::before {
+            background: #6366f1
+        }
+
+        .stat-box:nth-child(3)::before {
+            background: #f59e0b
+        }
+
+        /* Particles background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(99, 102, 241, .3);
+            border-radius: 50%;
+            animation: particleFloat linear infinite
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0
+            }
+
+            10% {
+                opacity: 1
+            }
+
+            90% {
+                opacity: 1
+            }
+
+            100% {
+                transform: translateY(-10vh) rotate(720deg);
+                opacity: 0
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Particles -->
+    <div class="particles" id="particles"></div>
+
+    <div class="presentation">
+        <div class="slide-number" id="slideNum">01 / 08</div>
+
+        <!-- SLIDE 1: Kirish -->
+        <div class="slide active" id="s1">
+            <div class="glow glow-purple" style="top:-120px;right:-80px"></div>
+            <div class="glow glow-cyan" style="bottom:-120px;left:-80px"></div>
+            <div class="slide-content fade-in">
+                <div class="badge badge-purple">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <path d="M3 9h18M9 21V9" />
+                    </svg>
+                    Biznes Model Taqdimoti
+                </div>
+                <h1><span class="gradient-text">IT va Marketing</span><br>Agentligi</h1>
+                <p class="subtitle">O'zbekiston bozorida "Kichik" va "O'rta" bizneslar uchun raqamli yechimlar: sayt,
+                    bot, CRM, marketing xizmatlari</p>
+                <div class="grid3 fade-in" style="max-width:720px;margin:0 auto">
+                    <div class="hero-card">
+                        <div class="ico" style="background:rgba(99,102,241,.15);color:#818cf8">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <rect x="2" y="3" width="20" height="14" rx="2" />
+                                <path d="M8 21h8M12 17v4" />
+                            </svg>
+                        </div>
+                        <h4>Saytlar & Landing</h4>
+                        <p>Zamonaviy web yechimlar</p>
+                    </div>
+                    <div class="hero-card">
+                        <div class="ico" style="background:rgba(6,182,212,.15);color:#22d3ee">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M12 8V4H8" />
+                                <rect x="2" y="2" width="20" height="20" rx="5" />
+                                <path d="M2 12h4l3-3 4 6 3-3h6" />
+                            </svg>
+                        </div>
+                        <h4>Botlar & CRM</h4>
+                        <p>Avtomatlashtirish tizimlari</p>
+                    </div>
+                    <div class="hero-card">
+                        <div class="ico" style="background:rgba(139,92,246,.15);color:#c084fc">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M21 12a9 9 0 11-6.219-8.56" />
+                                <path d="M21 3v5h-5" />
+                            </svg>
+                        </div>
+                        <h4>Marketing</h4>
+                        <p>Kuchli reklama strategiyasi</p>
+                    </div>
+                </div>
+                <p class="fade-in"
+                    style="margin-top:28px;font-size:14px;color:var(--muted);display:flex;align-items:center;gap:8px;justify-content:center">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                    </svg>
+                    Professional kadrlar va agressiv marketing orqali barqaror daromadga chiqish
+                </p>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Bozor Tahlili -->
+        <div class="slide" id="s2">
+            <div class="glow glow-purple" style="top:50%;left:-120px"></div>
+            <div class="glow glow-green" style="bottom:-60px;right:-60px"></div>
+            <div class="slide-content fade-in">
+                <div class="badge badge-cyan">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                    </svg>
+                    Bozor Tahlili
+                </div>
+                <h2>Market Analysis</h2>
+                <p class="subtitle" style="margin-bottom:32px">O'zbekistonda kichik biznesning <strong
+                        style="color:#a5b4fc">70% dan ortig'i</strong> raqamli transformatsiyaga muhtoj</p>
+                <div class="grid2 fade-in">
+                    <div class="card">
+                        <div class="ico" style="background:rgba(99,102,241,.15);color:#818cf8">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+                                <line x1="4" y1="22" x2="4" y2="15" />
+                            </svg>
+                        </div>
+                        <h3>Kichik Biznes <span style="font-size:13px;color:var(--muted);font-weight:400">— Segment
+                                K</span></h3>
+                        <p
+                            style="color:var(--muted);font-size:14px;margin-bottom:14px;display:flex;align-items:center;gap:6px">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#818cf8"
+                                stroke-width="2">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                            Landing page, oddiy botlar
+                        </p>
+                        <div class="stat" style="color:#818cf8">$200 – $400</div>
+                        <div class="stat-label">Loyiha narxi</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill"
+                                style="width:30%;background:linear-gradient(90deg,#6366f1,#818cf8)"></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ico" style="background:rgba(6,182,212,.15);color:#22d3ee">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <rect x="2" y="7" width="20" height="14" rx="2" />
+                                <path d="M16 3h-8l-2 4h12l-2-4z" />
+                            </svg>
+                        </div>
+                        <h3>O'rta Biznes <span style="font-size:13px;color:var(--muted);font-weight:400">— Segment
+                                O</span></h3>
+                        <p
+                            style="color:var(--muted);font-size:14px;margin-bottom:14px;display:flex;align-items:center;gap:6px">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22d3ee"
+                                stroke-width="2">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                            Korporativ saytlar, CRM, murakkab tizimlar
+                        </p>
+                        <div class="stat" style="color:#22d3ee">$1,500 – $2,000</div>
+                        <div class="stat-label">Loyiha narxi</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill"
+                                style="width:85%;background:linear-gradient(90deg,#06b6d4,#22d3ee)"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card fade-in"
+                    style="max-width:1100px;width:100%;margin-top:20px;text-align:center;background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(6,182,212,.08))">
+                    <p style="font-size:14px;display:flex;align-items:center;gap:8px;justify-content:center">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 16v-4M12 8h.01" />
+                        </svg>
+                        <strong>Strategiya:</strong> Kuchli marketing <span
+                            style="color:#fcd34d;font-weight:700">($1,250+)</span> orqali bozorda tez tanilish
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: Oylik Daromad -->
+        <div class="slide" id="s3">
+            <div class="glow glow-cyan" style="top:-50px;right:-100px"></div>
+            <div class="slide-content fade-in">
+                <div class="badge badge-green">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23" />
+                        <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+                    </svg>
+                    Daromad Rejasi
+                </div>
+                <h2>Oylik Daromad (Revenue)</h2>
+                <p class="subtitle" style="margin-bottom:20px">Har oylik rejalashtirilgan tushum taqsimoti</p>
+                <div class="stat-highlight fade-in" style="max-width:1100px;width:100%;margin-bottom:24px">
+                    <div class="stat-box">
+                        <div class="stat-label">Kichik loyihalar</div>
+                        <div class="stat counter" style="color:#34d399;font-size:24px" data-to="6000">15 ta</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">O'rta loyihalar</div>
+                        <div class="stat counter" style="color:#818cf8;font-size:24px" data-to="10000">5 ta</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Jami oylik tushum</div>
+                        <div class="stat counter" style="color:#fcd34d;font-size:24px" data-to="16000">$10,500 – $16,000
+                        </div>
+                    </div>
+                </div>
+                <div class="grid2 fade-in">
+                    <div style="width:100%">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Loyiha Turi</th>
+                                    <th>Narxi ($)</th>
+                                    <th>Soni</th>
+                                    <th>Jami ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="display:flex;align-items:center;gap:8px"><span
+                                            style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;box-shadow:0 0 6px #10b981"></span>
+                                        K (Kichik)</td>
+                                    <td>$200 – $400</td>
+                                    <td>15 ta</td>
+                                    <td style="color:#34d399;font-weight:600">$3,000 – $6,000</td>
+                                </tr>
+                                <tr>
+                                    <td style="display:flex;align-items:center;gap:8px"><span
+                                            style="width:8px;height:8px;border-radius:50%;background:#6366f1;display:inline-block;box-shadow:0 0 6px #6366f1"></span>
+                                        O (O'rta)</td>
+                                    <td>$1,500 – $2,000</td>
+                                    <td>5 ta</td>
+                                    <td style="color:#818cf8;font-weight:600">$7,500 – $10,000</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td style="display:flex;align-items:center;gap:8px"><svg width="16" height="16"
+                                            viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="2">
+                                            <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                                        </svg> JAMI</td>
+                                    <td>—</td>
+                                    <td>20 ta</td>
+                                    <td>$10,500 – $16,000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="chart-container"><canvas id="revenueChart"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: Loyiha Bajarish Tezligi -->
+        <div class="slide" id="s4">
+            <div class="glow glow-green" style="top:-80px;left:20%"></div>
+            <div class="glow glow-purple" style="bottom:-100px;right:-60px"></div>
+            <div class="slide-content fade-in">
+                <div class="badge badge-cyan">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 6v6l4 2" />
+                    </svg>
+                    Ish Tezligi
+                </div>
+                <h2>Loyiha Bajarish Tezligi</h2>
+                <p class="subtitle" style="margin-bottom:28px">Kamanda bilan loyihalarni bajarish muddati va target
+                    summalari</p>
+                <div class="grid2 fade-in">
+                    <div class="card"
+                        style="text-align:center;background:linear-gradient(135deg,var(--card),rgba(16,185,129,.06))">
+                        <div class="ico" style="background:rgba(16,185,129,.15);color:#34d399;margin:0 auto 12px">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                            </svg>
+                        </div>
+                        <h3 style="color:#34d399">Kichik Loyihalar</h3>
+                        <div class="stat" style="color:#34d399;font-size:28px">4 ta / 2 kun</div>
+                        <p style="font-size:13px;color:var(--muted);margin-top:8px">Kamanda bilan 2 kunda 4 ta kichik
+                            loyiha yakunlanadi</p>
+                        <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)">
+                            <div class="stat-label">Target summa (1 loyiha)</div>
+                            <div class="stat" style="color:#6ee7b7;font-size:24px">$50</div>
+                        </div>
+                    </div>
+                    <div class="card"
+                        style="text-align:center;background:linear-gradient(135deg,var(--card),rgba(99,102,241,.06))">
+                        <div class="ico" style="background:rgba(99,102,241,.15);color:#818cf8;margin:0 auto 12px">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <rect x="2" y="3" width="20" height="14" rx="2" />
+                                <path d="M8 21h8M12 17v4" />
+                            </svg>
+                        </div>
+                        <h3 style="color:#818cf8">Katta Loyihalar</h3>
+                        <div class="stat" style="color:#818cf8;font-size:28px">1 ta / 7 kun</div>
+                        <p style="font-size:13px;color:var(--muted);margin-top:8px">Kamanda bilan 1 ta katta loyiha 7
+                            kunda yakunlanadi</p>
+                        <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)">
+                            <div class="stat-label">Target summa (1 loyiha)</div>
+                            <div class="stat" style="color:#a5b4fc;font-size:24px">$100</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid3 fade-in" style="margin-top:20px">
+                    <div class="card" style="text-align:center">
+                        <div class="stat-label">Oylik kichik target</div>
+                        <div class="stat" style="color:#34d399;font-size:22px">$750</div>
+                        <p style="font-size:11px;color:var(--muted)">15 loyiha × $50</p>
+                    </div>
+                    <div class="card" style="text-align:center">
+                        <div class="stat-label">Oylik katta target</div>
+                        <div class="stat" style="color:#818cf8;font-size:22px">$500</div>
+                        <p style="font-size:11px;color:var(--muted)">5 loyiha × $100</p>
+                    </div>
+                    <div class="card"
+                        style="text-align:center;background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(6,182,212,.08))">
+                        <div class="stat-label">Jami oylik target</div>
+                        <div class="stat" style="color:#fcd34d;font-size:22px">$1,250</div>
+                        <p style="font-size:11px;color:var(--muted)">Barcha targetlar yig'indisi</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: HR & Xarajatlar -->
+        <div class="slide" id="s4">
+            <div class="glow glow-purple" style="bottom:-100px;left:50%"></div>
+            <div class="slide-content fade-in">
+                <div class="badge badge-orange">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+                    </svg>
+                    Inson Resurslari
+                </div>
+                <h2>HR & Operatsion Xarajatlar</h2>
+                <p class="subtitle" style="margin-bottom:24px">Jamoa tarkibi (6 kishi) va oylik xarajatlar</p>
+                <div class="grid2 fade-in">
+                    <div>
+                        <h3 style="margin-bottom:16px;color:#a5b4fc;display:flex;align-items:center;gap:8px">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+                            </svg>
+                            Jamoa
+                        </h3>
+                        <div class="card" style="margin-bottom:12px">
+                            <div class="key-metric">
+                                <div class="metric-dot" style="background:#818cf8;color:#818cf8"></div>
+                                <div style="flex:1;display:flex;justify-content:space-between;align-items:center">
+                                    <strong>Frontend Dasturchilari</strong><span
+                                        style="color:#818cf8;font-weight:700;font-size:15px">2x</span>
+                                </div>
+                            </div>
+                            <div style="text-align:right;color:var(--muted);font-size:13px;margin-top:4px">$800 – $1,300
+                            </div>
+                        </div>
+                        <div class="card" style="margin-bottom:12px">
+                            <div class="key-metric">
+                                <div class="metric-dot" style="background:#22d3ee;color:#22d3ee"></div>
+                                <div style="flex:1;display:flex;justify-content:space-between;align-items:center">
+                                    <strong>Backend Dasturchilari</strong><span
+                                        style="color:#22d3ee;font-weight:700;font-size:15px">2x</span>
+                                </div>
+                            </div>
+                            <div style="text-align:right;color:var(--muted);font-size:13px;margin-top:4px">$1,000 –
+                                $1,600</div>
+                        </div>
+                        <div class="card">
+                            <div class="key-metric">
+                                <div class="metric-dot" style="background:#c084fc;color:#c084fc"></div>
+                                <div style="flex:1;display:flex;justify-content:space-between;align-items:center">
+                                    <strong>UI/UX Dizayner</strong><span
+                                        style="color:#c084fc;font-weight:700;font-size:15px">1x</span>
+                                </div>
+                            </div>
+                            <div style="text-align:right;color:var(--muted);font-size:13px;margin-top:4px">$500 – $1,000
+                            </div>
+                        </div>
+                        <div class="card" style="margin-top:12px">
+                            <div class="key-metric">
+                                <div class="metric-dot" style="background:#fbbf24;color:#fbbf24"></div>
+                                <div style="flex:1;display:flex;justify-content:space-between;align-items:center">
+                                    <strong>SMM / Targetolog</strong><span
+                                        style="color:#fbbf24;font-weight:700;font-size:15px">1x</span>
+                                </div>
+                            </div>
+                            <div style="text-align:right;color:var(--muted);font-size:13px;margin-top:4px">$500
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="margin-bottom:16px;color:#fcd34d;display:flex;align-items:center;gap:8px">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="2" y="4" width="20" height="16" rx="2" />
+                                <path d="M2 10h20" />
+                            </svg>
+                            Doimiy Xarajatlar
+                        </h3>
+                        <div class="card" style="margin-bottom:12px">
+                            <div style="display:flex;justify-content:space-between;align-items:center"><span
+                                    style="display:flex;align-items:center;gap:8px"><svg width="16" height="16"
+                                        viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2">
+                                        <line x1="12" y1="1" x2="12" y2="23" />
+                                        <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+                                    </svg> Ish haqi fondi</span><span style="font-weight:700;color:#818cf8">$2,800 –
+                                    $4,400</span></div>
+                        </div>
+                        <div class="card" style="margin-bottom:12px">
+                            <div style="display:flex;justify-content:space-between;align-items:center"><span
+                                    style="display:flex;align-items:center;gap:8px"><svg width="16" height="16"
+                                        viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2">
+                                        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                                    </svg> Ofis ijarasi</span><span style="font-weight:700;color:#22d3ee">$400 –
+                                    $700</span></div>
+                        </div>
+                        <div class="card" style="margin-bottom:12px">
+                            <div style="display:flex;justify-content:space-between;align-items:center"><span
+                                    style="display:flex;align-items:center;gap:8px"><svg width="16" height="16"
+                                        viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2">
+                                        <polygon
+                                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                    </svg> Marketing</span><span style="font-weight:700;color:#fbbf24">$1,250 –
+                                    $2,000</span></div>
+                        </div>
+                        <div class="card"
+                            style="background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(99,102,241,.08));border-color:rgba(239,68,68,.2)">
+                            <div style="display:flex;justify-content:space-between;align-items:center"><span
+                                    style="font-weight:700;display:flex;align-items:center;gap:8px"><svg width="16"
+                                        height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2">
+                                        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                                    </svg> Umumiy OpEx</span><span
+                                    style="font-weight:800;color:#f87171;font-size:18px">$4,450 – $7,100</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: Soliq va Sof Foyda -->
+        <div class="slide" id="s5">
+            <div class="glow glow-cyan" style="top:30%;right:-80px"></div>
+            <div class="glow glow-green" style="bottom:10%;left:-60px"></div>
+            <div class="slide-content fade-in">
+                <div class="badge badge-green">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 20V10M18 20V4M6 20v-4" />
+                    </svg>
+                    Sof Foyda
+                </div>
+                <h2>Soliq va Sof Foyda</h2>
+                <p class="subtitle" style="margin-bottom:28px">Soliq stavkasi <strong style="color:#fcd34d">4%</strong>
+                    — yakuniy daromad taqsimoti</p>
+                <div class="grid2 fade-in">
+                    <div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ko'rsatkich</th>
+                                    <th>Min ($)</th>
+                                    <th>Max ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="display:flex;align-items:center;gap:6px"><svg width="14" height="14"
+                                            viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2">
+                                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+                                        </svg> Yalpi Foyda</td>
+                                    <td>$10,500</td>
+                                    <td style="color:#34d399">$16,000</td>
+                                </tr>
+                                <tr>
+                                    <td style="display:flex;align-items:center;gap:6px"><svg width="14" height="14"
+                                            viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2">
+                                            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                                        </svg> Soliq (4%)</td>
+                                    <td style="color:#f87171">-$420</td>
+                                    <td style="color:#f87171">-$640</td>
+                                </tr>
+                                <tr>
+                                    <td style="display:flex;align-items:center;gap:6px"><svg width="14" height="14"
+                                            viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2">
+                                            <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                                        </svg> Operatsion Xarajat</td>
+                                    <td style="color:#f87171">-$4,450</td>
+                                    <td style="color:#f87171">-$7,100</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td style="display:flex;align-items:center;gap:6px"><svg width="14" height="14"
+                                            viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="2">
+                                            <path d="M20 6L9 17l-5-5" />
+                                        </svg> Sof Foyda</td>
+                                    <td style="color:#34d399">$5,630</td>
+                                    <td style="color:#34d399">$8,260</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="card fade-in"
+                            style="margin-top:16px;background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(6,182,212,.08));border-color:rgba(16,185,129,.25);text-align:center">
+                            <div class="stat-label">Har bir hamkor ulushi (3 kishi)</div>
+                            <div class="stat" style="color:#34d399">$1,877 – $2,753</div>
+                            <p
+                                style="font-size:12px;color:var(--muted);margin-top:4px;display:flex;align-items:center;gap:4px;justify-content:center">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6ee7b7"
+                                    stroke-width="2">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <path d="M12 16v-4M12 8h.01" />
+                                </svg>
+                                oylik, soliqlardan keyin
+                            </p>
+                        </div>
+                    </div>
+                    <div class="chart-container"><canvas id="profitChart"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: Start-up Kapitali -->
+        <div class="slide" id="s6">
+            <div class="glow glow-purple" style="top:0;left:40%"></div>
+            <div class="slide-content fade-in">
+                <div class="badge badge-orange">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z" />
+                        <path
+                            d="M12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z" />
+                    </svg>
+                    Start-up Kapitali
+                </div>
+                <h2>Boshlang'ich Investitsiya</h2>
+                <p class="subtitle" style="margin-bottom:28px">Umumiy zarur kapital: <strong
+                        style="color:#fcd34d">120,000,000 so'm</strong></p>
+                <div class="grid3 fade-in">
+                    <div class="card"
+                        style="text-align:center;background:linear-gradient(135deg,var(--card),rgba(239,68,68,.06));position:relative;overflow:hidden">
+                        <div class="ico" style="background:rgba(239,68,68,.12);color:#f87171;margin:0 auto 12px">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                                <polyline points="9 22 9 12 15 12 15 22" />
+                            </svg>
+                        </div>
+                        <div class="stat-label">Ma'muriy xarajatlar</div>
+                        <div class="stat" style="color:#f87171;font-size:24px">28.3 mln</div>
+                        <p style="font-size:12px;color:var(--muted)">Texnika va ofis</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill"
+                                style="width:24%;background:linear-gradient(90deg,#ef4444,#f87171)"></div>
+                        </div>
+                    </div>
+                    <div class="card"
+                        style="text-align:center;background:linear-gradient(135deg,var(--card),rgba(245,158,11,.06))">
+                        <div class="ico" style="background:rgba(245,158,11,.12);color:#fbbf24;margin:0 auto 12px">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                            </svg>
+                        </div>
+                        <div class="stat-label">Kommunal/Boshqa</div>
+                        <div class="stat" style="color:#fbbf24;font-size:24px">6.0 mln</div>
+                        <p style="font-size:12px;color:var(--muted)">Kundalik xarajatlar</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill"
+                                style="width:5%;background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div>
+                        </div>
+                    </div>
+                    <div class="card"
+                        style="text-align:center;background:linear-gradient(135deg,var(--card),rgba(16,185,129,.06))">
+                        <div class="ico" style="background:rgba(16,185,129,.12);color:#34d399;margin:0 auto 12px">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            </svg>
+                        </div>
+                        <div class="stat-label">Zaxira mablag'</div>
+                        <div class="stat" style="color:#34d399;font-size:24px">85.7 mln</div>
+                        <p style="font-size:12px;color:var(--muted)">Qoldiq</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill"
+                                style="width:71%;background:linear-gradient(90deg,#10b981,#34d399)"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid2 fade-in" style="margin-top:20px">
+                    <div class="card" style="text-align:center">
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:4px">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8"
+                                stroke-width="2">
+                                <rect x="1" y="4" width="22" height="16" rx="2" />
+                                <path d="M1 10h22" />
+                            </svg>
+                            <div class="stat-label" style="margin:0">Yillik soliq prognozi</div>
+                        </div>
+                        <div class="stat" style="font-size:22px;color:#a5b4fc">14,048,000 so'm</div>
+                    </div>
+                    <div class="card" style="text-align:center">
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:4px">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fbbf24"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 6v6l4 2" />
+                            </svg>
+                            <div class="stat-label" style="margin:0">Soliq stavkasi</div>
+                        </div>
+                        <div class="stat" style="font-size:22px;color:#fcd34d">4%</div>
+                    </div>
+                </div>
+                <div class="chart-container fade-in" style="max-width:280px;margin-top:20px"><canvas
+                        id="capitalChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: Xulosa -->
+        <div class="slide" id="s7">
+            <div class="glow glow-purple" style="top:-50px;left:30%"></div>
+            <div class="glow glow-cyan" style="bottom:-50px;right:20%"></div>
+            <div class="slide-content fade-in">
+                <div class="badge badge-purple">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M16 8l-4 4-4-4" />
+                    </svg>
+                    Xulosa
+                </div>
+                <h2>Xulosa va Strategiya</h2>
+                <p class="subtitle" style="margin-bottom:32px">Loyiha rentabelligi va o'sish strategiyasi</p>
+                <div class="conclusion-grid fade-in">
+                    <div class="conclusion-card">
+                        <div class="ico" style="background:rgba(16,185,129,.12);color:#34d399;margin:0 auto 12px">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M12 20V10M18 20V4M6 20v-4" />
+                            </svg>
+                        </div>
+                        <h3 style="color:#34d399">Rentabellik</h3>
+                        <p style="font-size:13px;color:var(--muted);line-height:1.65">4% soliq stavkasi bilan loyiha
+                            <strong style="color:var(--text)">yuqori foyda marjasi</strong>ga ega
+                        </p>
+                    </div>
+                    <div class="conclusion-card">
+                        <div class="ico" style="background:rgba(99,102,241,.12);color:#818cf8;margin:0 auto 12px">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path
+                                    d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z" />
+                                <path
+                                    d="M12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z" />
+                            </svg>
+                        </div>
+                        <h3 style="color:#818cf8">O'sish</h3>
+                        <p style="font-size:13px;color:var(--muted);line-height:1.65">120 mln investitsiya → <strong
+                                style="color:var(--text)">3-4 oy</strong>da oylik <strong
+                                style="color:#34d399">$2,000+</strong> shaxsiy daromad</p>
+                    </div>
+                    <div class="conclusion-card">
+                        <div class="ico" style="background:rgba(245,158,11,.12);color:#fbbf24;margin:0 auto 12px">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            </svg>
+                        </div>
+                        <h3 style="color:#fbbf24">Xavfsizlik</h3>
+                        <p style="font-size:13px;color:var(--muted);line-height:1.65"><strong
+                                style="color:var(--text)">85.7 mln</strong> zaxira — loyihani <strong
+                                style="color:var(--text)">6 oygacha</strong> barqaror ushlab turadi</p>
+                    </div>
+                </div>
+                <div class="card fade-in"
+                    style="max-width:1100px;width:100%;margin-top:24px;text-align:center;background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(6,182,212,.1));border-color:rgba(99,102,241,.25)">
+                    <h3 class="gradient-text"
+                        style="font-size:24px;margin-bottom:6px;display:flex;align-items:center;gap:10px;justify-content:center">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#grad1)"
+                            stroke-width="2">
+                            <polygon
+                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                        <svg width="0" height="0">
+                            <defs>
+                                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#818cf8" />
+                                    <stop offset="100%" style="stop-color:#22d3ee" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        Kelajak Porloq!
+                    </h3>
+                    <p style="color:var(--muted);font-size:14px">Professional kadrlar + Agressiv marketing = Barqaror
+                        muvaffaqiyat</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav" id="nav"></div>
+    <div class="nav-arrows">
+        <button onclick="changeSlide(-1)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6" />
+            </svg>
+        </button>
+        <button onclick="changeSlide(1)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6" />
+            </svg>
+        </button>
+    </div>
+
+    <script>
+        // Particles
+        (function () { const c = document.getElementById('particles'); for (let i = 0; i < 20; i++) { const p = document.createElement('div'); p.className = 'particle'; const s = Math.random() * 4 + 2; p.style.width = s + 'px'; p.style.height = s + 'px'; p.style.left = Math.random() * 100 + '%'; p.style.animationDuration = (Math.random() * 20 + 15) + 's'; p.style.animationDelay = (Math.random() * 20) + 's'; p.style.background = `rgba(${[99, 6, 139][Math.floor(Math.random() * 3)]},${[102, 182, 92][Math.floor(Math.random() * 3)]},${[241, 212, 246][Math.floor(Math.random() * 3)]},.25)`; c.appendChild(p) } })();
+
+        const totalSlides = 8; let current = 0;
+        const nav = document.getElementById('nav');
+        for (let i = 0; i < totalSlides; i++) { const d = document.createElement('div'); d.className = 'nav-dot' + (i === 0 ? ' active' : ''); d.onclick = () => goTo(i); nav.appendChild(d) }
+        function goTo(n) {
+            if (n < 0 || n >= totalSlides) return;
+            document.querySelectorAll('.slide').forEach((s, i) => { s.classList.toggle('active', i === n) });
+            document.querySelectorAll('.nav-dot').forEach((d, i) => { d.classList.toggle('active', i === n) });
+            document.getElementById('slideNum').textContent = String(n + 1).padStart(2, '0') + ' / 0' + totalSlides;
+            current = n;
+            if (n === 2) initRevenueChart(); if (n === 5) initProfitChart(); if (n === 6) initCapitalChart();
+        }
+        function changeSlide(d) { goTo(current + d) }
+        document.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1); if (e.key === 'ArrowLeft') changeSlide(-1) });
+
+        let rc, pc, cc;
+        function initRevenueChart() {
+            if (rc) return; const ctx = document.getElementById('revenueChart');
+            rc = new Chart(ctx, { type: 'doughnut', data: { labels: ['Kichik (K)', 'O\'rta (O)'], datasets: [{ data: [6000, 10000], backgroundColor: ['#10b981', '#6366f1'], borderWidth: 0, hoverOffset: 10, borderRadius: 4 }] }, options: { responsive: true, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 16, font: { size: 13, family: 'Inter' }, usePointStyle: true, pointStyleWidth: 10 } } } } });
+        }
+        function initProfitChart() {
+            if (pc) return; const ctx = document.getElementById('profitChart');
+            pc = new Chart(ctx, { type: 'bar', data: { labels: ['Yalpi', 'Soliq', 'OpEx', 'Sof Foyda'], datasets: [{ label: 'Min ($)', data: [10500, 420, 4450, 5630], backgroundColor: ['rgba(99,102,241,.25)', 'rgba(239,68,68,.25)', 'rgba(245,158,11,.25)', 'rgba(16,185,129,.25)'], borderColor: ['#6366f1', '#ef4444', '#f59e0b', '#10b981'], borderWidth: 2, borderRadius: 10 }, { label: 'Max ($)', data: [16000, 640, 7100, 8260], backgroundColor: ['rgba(99,102,241,.5)', 'rgba(239,68,68,.5)', 'rgba(245,158,11,.5)', 'rgba(16,185,129,.5)'], borderColor: ['#6366f1', '#ef4444', '#f59e0b', '#10b981'], borderWidth: 2, borderRadius: 10 }] }, options: { responsive: true, scales: { y: { ticks: { color: '#94a3b8', font: { family: 'Inter' } }, grid: { color: 'rgba(255,255,255,.04)' } }, x: { ticks: { color: '#94a3b8', font: { family: 'Inter' } }, grid: { display: false } } }, plugins: { legend: { labels: { color: '#94a3b8', usePointStyle: true, font: { family: 'Inter' } } } } } });
+        }
+        function initCapitalChart() {
+            if (cc) return; const ctx = document.getElementById('capitalChart');
+            cc = new Chart(ctx, { type: 'doughnut', data: { labels: ['Ma\'muriy', 'Kommunal', 'Zaxira'], datasets: [{ data: [28.3, 6, 85.7], backgroundColor: ['#ef4444', '#f59e0b', '#10b981'], borderWidth: 0, hoverOffset: 10, borderRadius: 4 }] }, options: { responsive: true, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 12, font: { size: 12, family: 'Inter' }, usePointStyle: true } } } } });
+        }
+    </script>
+</body>
+
+</html>
