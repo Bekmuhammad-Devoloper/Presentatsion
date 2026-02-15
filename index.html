@@ -643,6 +643,219 @@
                 opacity: 0
             }
         }
+
+        /* ==================== MOBILE RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            body {
+                overflow-x: hidden;
+                overflow-y: auto
+            }
+
+            .slide {
+                padding: 20px 16px;
+                justify-content: flex-start;
+                padding-top: 60px;
+                padding-bottom: 80px
+            }
+
+            .slide-number {
+                top: 12px;
+                left: 16px;
+                font-size: 11px
+            }
+
+            h1 {
+                font-size: clamp(24px, 7vw, 36px) !important;
+                line-height: 1.15;
+                margin-bottom: 10px
+            }
+
+            h2 {
+                font-size: clamp(20px, 6vw, 30px) !important;
+                margin-bottom: 8px
+            }
+
+            h3 {
+                font-size: 15px;
+                margin-bottom: 8px
+            }
+
+            .subtitle {
+                font-size: 13px;
+                line-height: 1.5;
+                margin-bottom: 16px
+            }
+
+            .badge {
+                font-size: 10px;
+                padding: 6px 14px;
+                margin-bottom: 12px
+            }
+
+            /* Gridlar 1 ustunli */
+            .grid2,
+            .grid3,
+            .conclusion-grid,
+            .stat-highlight {
+                grid-template-columns: 1fr !important;
+                gap: 12px
+            }
+
+            .card {
+                padding: 16px;
+                border-radius: 14px
+            }
+
+            .hero-card {
+                padding: 18px 14px
+            }
+
+            .stat {
+                font-size: 22px !important
+            }
+
+            .stat-label {
+                font-size: 11px
+            }
+
+            /* Jadval mobil */
+            table {
+                font-size: 12px
+            }
+
+            th {
+                padding: 10px 10px;
+                font-size: 10px;
+                letter-spacing: 0.5px
+            }
+
+            td {
+                padding: 10px 10px;
+                font-size: 12px
+            }
+
+            /* Chartlar */
+            .chart-container {
+                max-width: 260px !important
+            }
+
+            /* Nav */
+            .nav {
+                bottom: 16px;
+                gap: 6px
+            }
+
+            .nav-dot {
+                width: 8px;
+                height: 8px
+            }
+
+            .nav-dot.active {
+                width: 24px
+            }
+
+            .nav-arrows {
+                bottom: 12px;
+                right: 12px;
+                gap: 6px
+            }
+
+            .nav-arrows button {
+                width: 36px;
+                height: 36px;
+                border-radius: 10px;
+                font-size: 16px
+            }
+
+            /* Icon boxes */
+            .ico {
+                width: 42px;
+                height: 42px;
+                border-radius: 12px;
+                margin-bottom: 10px
+            }
+
+            .ico svg {
+                width: 20px;
+                height: 20px
+            }
+
+            /* Conclusion cards */
+            .conclusion-card {
+                padding: 20px
+            }
+
+            /* Glow effects - kichikroq */
+            .glow {
+                width: 200px;
+                height: 200px;
+                filter: blur(100px);
+                opacity: .08
+            }
+
+            /* Stat boxes */
+            .stat-box {
+                padding: 12px
+            }
+
+            /* Slide content */
+            .slide-content {
+                max-width: 100% !important
+            }
+
+            /* Key metrics */
+            .key-metric {
+                padding: 10px 0;
+                gap: 10px;
+                font-size: 13px
+            }
+
+            /* Particles - kamroq */
+            .particle {
+                display: none
+            }
+
+            .particle:nth-child(-n+8) {
+                display: block
+            }
+        }
+
+        /* Juda kichik ekranlar (iPhone SE va h.k.) */
+        @media (max-width: 380px) {
+            .slide {
+                padding: 14px 12px;
+                padding-top: 50px;
+                padding-bottom: 70px
+            }
+
+            h1 {
+                font-size: 22px !important
+            }
+
+            h2 {
+                font-size: 18px !important
+            }
+
+            .grid3 {
+                gap: 8px
+            }
+
+            .hero-card {
+                padding: 14px 10px
+            }
+
+            .hero-card h4 {
+                font-size: 13px
+            }
+
+            .hero-card p {
+                font-size: 10px
+            }
+
+            th, td {
+                padding: 8px 6px
+            }
+        }
     </style>
 </head>
 
@@ -1335,6 +1548,41 @@
         }
         function changeSlide(d) { goTo(current + d) }
         document.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1); if (e.key === 'ArrowLeft') changeSlide(-1) });
+
+        // Touch Swipe support
+        (function() {
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let touchEndX = 0;
+            let touchEndY = 0;
+            const minSwipeDistance = 50;
+
+            document.addEventListener('touchstart', function(e) {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+            }, { passive: true });
+
+            document.addEventListener('touchend', function(e) {
+                touchEndX = e.changedTouches[0].screenX;
+                touchEndY = e.changedTouches[0].screenY;
+                handleSwipe();
+            }, { passive: true });
+
+            function handleSwipe() {
+                const diffX = touchStartX - touchEndX;
+                const diffY = touchStartY - touchEndY;
+                // Faqat gorizontal swipe (vertical scroll ga xalaqit bermasligi uchun)
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > minSwipeDistance) {
+                    if (diffX > 0) {
+                        // Chapga surish = keyingi slide
+                        changeSlide(1);
+                    } else {
+                        // O'ngga surish = oldingi slide
+                        changeSlide(-1);
+                    }
+                }
+            }
+        })();
 
         let rc, pc, cc;
         function initRevenueChart() {
